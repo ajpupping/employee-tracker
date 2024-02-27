@@ -28,29 +28,30 @@ function promptUser() {
             ],
         }
     ]).then((answers) => {
-        if (answers.action === 'View all departments') {
-            viewDepartments().then((departments) => {
-                console.table(departments);
-                promptUser();
-            });
-        } else if (answers.action === 'View all roles') {
-            viewRoles().then((roles) => {
-                console.table(roles);
-                promptUser();
-            });
-        } else if (answers.action === 'View all employees') {
-            viewEmployees().then((employees) => {
-                console.table(employees);
-                promptUser();
-            });
-        } else if (answers.action === 'Add a department') {
-            addDepartmentPrompt();
-        } else if (answers.action === 'Add a role') {
-            addRolePrompt();
-        } else if (answers.action === 'Add an employee') {
-            addEmployeePrompt();
-        } else if (answers.action === 'Update an employee role') {
-            updateEmployeeRolePrompt();
+        switch (answers.action) {
+            case 'View all departments':
+                viewDepartments();
+                break;
+            case 'View all roles':
+                viewRoles();
+                break;
+            case 'View all employees':
+                viewEmployees();
+                break;
+            case 'Add a department':
+                addDepartment();
+                break;
+            case 'Add a role':
+                addRole();
+                break;
+            case 'Add an employee':
+                addEmployee();
+                break;
+            case 'Update an employee role':
+                updateEmployeeRole();
+                break;
         }
     });
-}       
+}
+
+promptUser();
