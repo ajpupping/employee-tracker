@@ -29,10 +29,31 @@ function promptUser() {
                 viewEmployees(promptUser);
                 break;
             case 'Add a department':
-                addDepartment(promptUser);
+                inquirer.prompt([
+                    {
+                        type: 'input',
+                        name: 'departmentName',
+                        message: 'Enter the name of the department you would like to add:'
+                    }
+                ]).then(({ departmentName }) => {
+                    addDepartment(departmentName, promptUser);
+                });
                 break;
             case 'Add a role':
-                addRole(promptUser);
+                inquirer.prompt([
+                    {
+                        type: 'input',
+                        name: 'roleTitle',
+                        message: 'Enter the title of the role you would like to add:'
+                    },
+                    {
+                        type: 'input',
+                        name: 'roleSalary',
+                        message: 'Enter the salary of the role you would like to add:'
+                    },
+                ]).then(({ roleTitle, roleSalary, roleDepartment }) => {
+                    addRole(roleTitle, roleSalary, roleDepartment, promptUser);
+                });
                 break;
             case 'Add an employee':
                 addEmployee(promptUser);

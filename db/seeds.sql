@@ -1,20 +1,22 @@
--- seeds.sql
-
 USE employee_db;
 
-INSERT INTO department (name) VALUES ('Engineering'), ('Science'), ('Command');
+INSERT INTO departments (name) VALUES 
+('Command'),
+('Engineering'), 
+('Science');
 
-INSERT INTO role (title, salary, department_id) VALUES 
-('Commander', 100000, 1),
-('Engineer', 90000, 2),
-('Scientist', 80000, 3);
+INSERT INTO roles (title, department_id, salary) VALUES 
+('Captain', 1, 100000),
+('Commander', 1, 90000),
+('Engineer', 2, 80000),
+('Scientist', 3, 750000);
 
-INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES 
-('Jean-Luc', 'Picard', 1, 1), 
-('Geordi', 'La Forge', 2 , NULL),
-('Deanna', 'Troi', 3, NULL),
-('William', 'Riker', 1, NULL),
-('Beverly', 'Crusher', 3, NULL),
-('Worf', 'Son of Mogh', 1, NULL),
-('Data', 'Soong', 3, NULL),
-('Miles', 'O''Brien', 2, NULL);
+INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES 
+('Jean-Luc', 'Picard', 1, NULL), 
+('William', 'Riker', 2, 1),
+('Deanna', 'Troi', 4, 1),
+('Geordi', 'La Forge', 3, 1),
+('Miles', 'O''Brien', 3, 4),
+('Beverly', 'Crusher', 4, 1),
+('Worf', 'Son of Mogh', 2, 2),
+('Data', 'Soong', 4, 1);
