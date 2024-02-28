@@ -44,3 +44,7 @@ I used [this site](https://www.stanleyulili.com/node/node-modules-import-and-use
 ## License 
 
 This application was created for educational purposes and does not have a license. 
+
+## Walkthrough 
+
+[Click here](https://drive.google.com/file/d/1RI4iZK6kqC3sXiw3s8a_kgeZ3jfZDcac/view?usp=drive_link) to find a video demonstrating the functionality of the application. 
