@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const { viewDepartments, viewRoles, viewEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./db');
+const { viewDepartments, viewRoles, viewEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./db/db.js');
 
 function promptUser() {
     inquirer.prompt([
@@ -20,25 +20,25 @@ function promptUser() {
     ]).then((answers) => {
         switch (answers.action) {
             case 'View all departments':
-                viewDepartments();
+                viewDepartments(promptUser);
                 break;
             case 'View all roles':
-                viewRoles();
+                viewRoles(promptUser);
                 break;
             case 'View all employees':
-                viewEmployees();
+                viewEmployees(promptUser);
                 break;
             case 'Add a department':
-                addDepartment();
+                addDepartment(promptUser);
                 break;
             case 'Add a role':
-                addRole();
+                addRole(promptUser);
                 break;
             case 'Add an employee':
-                addEmployee();
+                addEmployee(promptUser);
                 break;
             case 'Update an employee role':
-                updateEmployeeRole();
+                updateEmployeeRole(promptUser);
                 break;
         }
     });
