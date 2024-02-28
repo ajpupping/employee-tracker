@@ -10,6 +10,9 @@ const connection = mysql
     })
     .promise();
 
+
+// View Departments 
+
 async function viewDepartments(callback) {
     try {
         const [rows] = await connection.query('SELECT * FROM departments');
@@ -21,7 +24,10 @@ async function viewDepartments(callback) {
     }
 }
 
+// View Roles
+
 async function viewRoles(callback) {
+    // Display roles with department name instead of department id
     const query = `
     SELECT 
         roles.id AS 'Role ID',
@@ -41,7 +47,11 @@ async function viewRoles(callback) {
     }
 }
 
+// View Employees
+
 async function viewEmployees(callback) {
+    // Display employee names, job titles, departments, salaries, and managers
+
     const query = 
         `SELECT 
             employees.id AS 'Employee ID',
@@ -65,23 +75,60 @@ async function viewEmployees(callback) {
     }
 }
 
+// Add Department
+
 async function addDepartment(departmentName, callback) {
-    const [department] = await connection.query(
-        'INSERT INTO departments (name) VALUES (?)',
-        [departmentName]
-    );
-    console.log(`${departmentName} has been added to the database`);
-    callback();
+    try {
+        // Check if department already exists
+        const [departments] = await connection.query('SELECT name FROM departments WHERE name = ?', [departmentName]);
+
+        if (departments.length > 0) {
+            console.log(`${departmentName} already exists in the database`);
+        } else {
+            // Add the new department
+            await connection.query(
+                'INSERT INTO departments (name) VALUES (?)',
+                [departmentName]
+            );
+            console.log(`${departmentName} has been added to the database`);
+        }
+    } catch (err) {
+        console.log(err);
+    } 
+    finally {
+        callback();
+    }
 }
 
-async function addRole(callback) {
-    const [role] = await connection.query(
-        'INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)',
-        [roleTitle, roleSalary, roleDepartment]
-    );
-    console.log(`${roleTitle} has been added to the database`);
-    callback();
+
+// Add Role
+
+async function addRole(roleTitle, roleSalary, roleDepartment, callback) {
+    try {
+        // Fetch department id from department name
+        const [departments] = await connection.query('SELECT id FROM departments WHERE name = ?', [roleDepartment]);
+        // Check if department exists
+        if (departments.length === 0) {
+            console.log('Department not found');
+            return callback();
+        }
+        // Use the first matching department id
+        const departmentId = departments[0].id;
+
+        // Add the new role with the department id
+        await connection.query(
+            'INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)',
+            [roleTitle, roleSalary, departmentId]
+        );
+        console.log(`${roleTitle} has been added to the database`);
+    } catch (err) {
+        console.log(err);
+    } finally {
+        callback();
+    }
 }
+
+// Add Employee
 
 async function addEmployee(callback) {
     const [employee] = await connection.query(

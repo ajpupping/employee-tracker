@@ -51,6 +51,12 @@ function promptUser() {
                         name: 'roleSalary',
                         message: 'Enter the salary of the role you would like to add:'
                     },
+                    {
+                        type: 'input',
+                        name: 'roleDepartment',
+                        message: 'Enter the name of the department this role belongs to:'
+                    }
+                    
                 ]).then(({ roleTitle, roleSalary, roleDepartment }) => {
                     addRole(roleTitle, roleSalary, roleDepartment, promptUser);
                 });
