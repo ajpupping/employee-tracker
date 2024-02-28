@@ -1,5 +1,7 @@
 const inquirer = require('inquirer');
-const { viewDepartments, viewRoles, viewEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } = require('./db/db.js');
+const { viewDepartments, viewRoles, viewEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole, getManagers, getRoles, getEmployees } = require('./db/db.js');
+
+// Main menu - prompt user for action
 
 function promptUser() {
     inquirer.prompt([
@@ -62,10 +64,54 @@ function promptUser() {
                 });
                 break;
             case 'Add an employee':
-                addEmployee(promptUser);
+                Promise.all([getRoles(), getManagers()]).then(([roleChoices, managerChoices]) => {
+                    inquirer.prompt([
+                        {
+                            type: 'input',
+                            name: 'firstName',
+                            message: 'Enter the first name of the new employee:'
+                        },
+                        {
+                            type: 'input',
+                            name: 'lastName',
+                            message: 'Enter the last name of the new employee:'
+                        },
+                        {
+                            type: 'list',
+                            name: 'roleId',
+                            message: 'Select a role for the new employee:',
+                            choices: roleChoices
+                        },
+                        {
+                            type: 'list',
+                            name: 'managerId',
+                            message: 'Select a manager for the new employee:',
+                            choices: managerChoices
+                        }
+                    ]).then(({ firstName, lastName, roleId, managerId }) => {
+                        addEmployee(firstName, lastName, roleId, managerId, promptUser);
+                    });
+                });
                 break;
             case 'Update an employee role':
-                updateEmployeeRole(promptUser);
+                Promise.all([getEmployees(), getRoles()]).then(([employeeChoices, roleChoices]) => {
+                    inquirer.prompt([
+                        {
+                            type: 'list',
+                            name: 'employeeId',
+                            message: 'Select an employee to update:',
+                            choices: employeeChoices
+                        },
+                        {
+                            type: 'list',
+                            name: 'roleId',
+                            message: 'Select a new role for the employee:',
+                            choices: roleChoices
+                        }
+                    ]).then(({ employeeId, roleId }) => {
+                        updateEmployeeRole(employeeId, roleId, promptUser);
+                    });
+                });
                 break;
         }
     });

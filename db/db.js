@@ -10,7 +10,6 @@ const connection = mysql
     })
     .promise();
 
-
 // View Departments 
 
 async function viewDepartments(callback) {
@@ -32,10 +31,10 @@ async function viewRoles(callback) {
     SELECT 
         roles.id AS 'Role ID',
         roles.title AS 'Title',
-        department.name AS 'Department',
+        departments.name AS 'Department',
         roles.salary AS 'Salary'
     FROM roles
-    JOIN department ON roles.department_id = department.id;
+    JOIN departments ON roles.department_id = departments.id;
 `;
     try {
         const [rows] = await connection.query(query);
@@ -63,7 +62,7 @@ async function viewEmployees(callback) {
             CONCAT(managers.first_name, ' ', managers.last_name) AS 'Manager'
         FROM employees
         JOIN roles ON employees.role_id = roles.id
-        JOIN departments ON roles.department_id = department.id
+        JOIN departments ON roles.department_id = departments.id
         LEFT JOIN employees managers ON employees.manager_id = managers.id;`;
     try {
         const [rows] = await connection.query(query);
@@ -130,24 +129,74 @@ async function addRole(roleTitle, roleSalary, roleDepartment, callback) {
 
 // Add Employee
 
-async function addEmployee(callback) {
-    const [employee] = await connection.query(
-        'INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)',
-        [employeeFirstName, employeeLastName, employeeRole, employeeManager]
-    );
-    console.log(
-        `${employeeFirstName} ${employeeLastName} has been added to the database`
-    );
-    callback();
+async function addEmployee(firstName, lastName, roleId, managerId, callback) {
+    try {
+        await connection.query(
+            'INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)',
+            [firstName, lastName, roleId, managerId]
+        );
+        console.log(`${firstName} ${lastName} has been added to the database`);
+    } catch (err) {
+        console.log(err);
+    } finally {
+        callback();
+    }
 }
 
-async function updateEmployeeRole(callback) {
-    const [employee] = await connection.query(
-        'UPDATE employees SET role_id = ? WHERE id = ?',
-        [newRole, employeeId]
-    );
-    console.log(`Employee role has been updated`);
-    callback();
+// Update Employee Role
+
+async function updateEmployeeRole(employeeId, roleId, callback) {
+    try {
+        await connection.query(
+            'UPDATE employees SET role_id = ? WHERE id = ?',
+            [roleId, employeeId]
+        );
+        console.log(`Employee role has been updated`);
+    } catch (err) {
+        console.log(err);
+    } finally {
+        callback();
+    }
+
+}
+
+// helper function to fetch manager data
+async function getManagers() {
+    try {
+        const [managers] = await connection.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employees WHERE manager_id IS NULL OR manager_id != ""');
+        const managerChoices = managers.map(manager => ({name: manager.name, value: manager.id}));
+        managerChoices.unshift({name: 'None', value: null});
+        return managerChoices;
+    } catch (err) {
+        console.log(err);
+        return [{name: 'None', value: null}];
+    }
+}
+
+// helper function to fetch role data
+
+async function getRoles() {
+    try {
+        const [roles] = await connection.query('SELECT id, title FROM roles');
+        const roleChoices = roles.map(role => ({name: role.title, value: role.id}));
+        return roleChoices;
+    } catch (err) {
+        console.log(err);
+        return [];
+    }
+
+}
+
+// helper function to fetch employee data
+async function getEmployees() {
+    try {
+        const [employees] = await connection.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employees');
+        const employeeChoices = employees.map(employee => ({name: employee.name, value: employee.id}));
+        return employeeChoices;
+    } catch (err) {
+        console.log(err);
+        return [];
+    }
 }
 
 module.exports = {
@@ -158,4 +207,7 @@ module.exports = {
     addRole,
     addEmployee,
     updateEmployeeRole,
+    getManagers,
+    getRoles,
+    getEmployees
 };
